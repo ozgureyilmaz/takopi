@@ -88,44 +88,43 @@ def extract_numeric_id(item_id: Optional[object], fallback: Optional[int] = None
     return fallback
 
 
-def with_id(item_id: Optional[int], *parts: str) -> str:
-    prefix = f"[{item_id}] " if item_id is not None else "[?] "
-    return prefix + "".join(parts)
+def attach_id(item_id: Optional[int], line: str) -> str:
+    return f"[{item_id if item_id is not None else '?'}] {line}"
 
 
-def format_item_action_line(etype: str, item_id: Optional[int], item: dict[str, Any]) -> str | None:
+def format_item_action_line(etype: str, item: dict[str, Any]) -> str | None:
     itype = item["type"]
     if itype == "command_execution":
         command = format_command(item["command"])
         if etype == "item.started":
-            return with_id(item_id, STATUS_RUNNING, " running: ", command)
+            return f"{STATUS_RUNNING} running: {command}"
         if etype == "item.completed":
             exit_code = item["exit_code"]
             exit_part = f" (exit {exit_code})" if exit_code is not None else ""
-            return with_id(item_id, STATUS_DONE, " ran: ", command, exit_part)
+            return f"{STATUS_DONE} ran: {command}{exit_part}"
         return None
 
     if itype == "mcp_tool_call":
         name = format_tool_call(item["server"], item["tool"])
         if etype == "item.started":
-            return with_id(item_id, STATUS_RUNNING, " tool: ", name)
+            return f"{STATUS_RUNNING} tool: {name}"
         if etype == "item.completed":
-            return with_id(item_id, STATUS_DONE, " tool: ", name)
+            return f"{STATUS_DONE} tool: {name}"
         return None
 
     return None
 
 
-def format_item_completed_line(item_id: Optional[int], item: dict[str, Any]) -> str | None:
+def format_item_completed_line(item: dict[str, Any]) -> str | None:
     itype = item["type"]
     if itype == "web_search":
         query = format_query(item["query"])
-        return with_id(item_id, STATUS_DONE, " searched: ", query)
+        return f"{STATUS_DONE} searched: {query}"
     if itype == "file_change":
-        return with_id(item_id, STATUS_DONE, " ", format_file_change(item["changes"]))
+        return f"{STATUS_DONE} {format_file_change(item['changes'])}"
     if itype == "error":
         warning = truncate(item["message"], 120)
-        return with_id(item_id, STATUS_DONE, " warning: ", warning)
+        return f"{STATUS_DONE} warning: {warning}"
     return None
 
 
@@ -176,13 +175,13 @@ def render_event_cli(
             lines.extend(indent(item["text"], "  ").splitlines())
 
         else:
-            action_line = format_item_action_line(etype, item_num, item)
+            action_line = format_item_action_line(etype, item)
             if action_line is not None:
-                lines.append(action_line)
+                lines.append(attach_id(item_num, action_line))
             elif etype == "item.completed":
-                completed_line = format_item_completed_line(item_num, item)
+                completed_line = format_item_completed_line(item)
                 if completed_line is not None:
-                    lines.append(completed_line)
+                    lines.append(attach_id(item_num, completed_line))
 
     return lines
 
@@ -208,15 +207,15 @@ class ExecProgressRenderer:
             if itype == "agent_message":
                 return False
 
-            action_line = format_item_action_line(etype, item_id, item)
+            action_line = format_item_action_line(etype, item)
             if action_line is not None:
-                self.state.recent_actions.append(action_line)
+                self.state.recent_actions.append(attach_id(item_id, action_line))
                 return True
 
             if etype == "item.completed":
-                completed_line = format_item_completed_line(item_id, item)
+                completed_line = format_item_completed_line(item)
                 if completed_line is not None:
-                    self.state.recent_actions.append(completed_line)
+                    self.state.recent_actions.append(attach_id(item_id, completed_line))
                     return True
 
         return False
