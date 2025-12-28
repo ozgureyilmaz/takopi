@@ -447,7 +447,8 @@ def run(
 
         answer = answer or "(No agent_message captured from JSON stream.)"
         elapsed = time.monotonic() - started_at
-        final_md = progress_renderer.render_final(elapsed, answer)
+        status = "error" if answer == "(No agent_message captured from JSON stream.)" else "done"
+        final_md = progress_renderer.render_final(elapsed, answer, status=status)
         final_text, final_entities = render_markdown(final_md)
         can_edit_final = progress_id is not None and len(final_text) <= TELEGRAM_TEXT_LIMIT
 

@@ -48,8 +48,7 @@ def _format_elapsed(elapsed_s: float) -> str:
     return f"{seconds}s"
 
 
-def _format_header(elapsed_s: float, turn: Optional[int], done: bool) -> str:
-    label = "Done" if done else "codex"
+def _format_header(elapsed_s: float, turn: Optional[int], label: str) -> str:
     elapsed = _format_elapsed(elapsed_s)
     if turn is not None:
         return f"{label}{HEADER_SEP}{elapsed}{HEADER_SEP}turn {turn}"
@@ -97,7 +96,9 @@ def _format_tool_call(server: str, tool: str) -> str:
 
 def _with_id(item_id: Optional[str], line: str) -> str:
     if item_id:
-        return f"[{item_id}] {line}"
+        match = re.search(r"(?:item_)?(\\d+)", item_id)
+        if match:
+            return f"[{match.group(1)}] {line}"
     return f"[?] {line}"
 
 
@@ -318,7 +319,7 @@ class ExecProgressRenderer:
         return changed
 
     def render_progress(self, elapsed_s: float) -> str:
-        header = _format_header(elapsed_s, self.state.last_turn, done=False)
+        header = _format_header(elapsed_s, self.state.last_turn, label="working")
         actions = list(self.state.recent_actions)
         current_reasoning = self.state.current_reasoning
         current_action = self.state.current_action
@@ -349,8 +350,8 @@ class ExecProgressRenderer:
 
         return message
 
-    def render_final(self, elapsed_s: float, answer: str) -> str:
-        header = _format_header(elapsed_s, self.state.last_turn, done=True)
+    def render_final(self, elapsed_s: float, answer: str, status: str = "done") -> str:
+        header = _format_header(elapsed_s, self.state.last_turn, label=status)
         lines: list[str] = []
         if self.state.recent_actions:
             lines.extend(self.state.recent_actions)
