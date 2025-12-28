@@ -264,10 +264,10 @@ class CodexExecRunner:
 
 def run(
     progress_edit_every_s: float = typer.Option(
-        2.5,
+        2.0,
         "--progress-edit-every",
         help="Minimum seconds between progress message edits.",
-        min=0.1,
+        min=1.0,
     ),
     progress_silent: bool = typer.Option(
         True,

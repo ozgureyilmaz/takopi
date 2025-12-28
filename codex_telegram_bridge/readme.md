@@ -39,7 +39,7 @@ uv run exec-bridge
 
 Optional flags:
 
-- `--progress-edit-every FLOAT` (default `2.5`)
+- `--progress-edit-every FLOAT` (default `2.0`)
 - `--progress-silent/--no-progress-silent` (default silent)
 - `--final-notify/--no-final-notify` (default notify via new message)
 - `--ignore-backlog/--process-backlog` (default ignore pending updates)
