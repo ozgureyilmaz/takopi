@@ -35,7 +35,7 @@ Optional keys (by mode):
 Run:
 
 ```bash
-uv run codex-telegram-exec-bridge
+uv run exec-bridge
 ```
 
 ## Option 2: MCP server
@@ -43,7 +43,7 @@ uv run codex-telegram-exec-bridge
 Run:
 
 ```bash
-uv run codex-telegram-mcp-bridge
+uv run mcp-bridge
 ```
 
 ## Option 3: tmux
@@ -51,13 +51,13 @@ uv run codex-telegram-mcp-bridge
 Reply injector:
 
 ```bash
-uv run codex-telegram-tmux-reply
+uv run tmux-reply
 ```
 
 Notifier (call from your existing hook):
 
 ```bash
-uv run codex-telegram-tmux-notify --tmux-target "codex1:0.0" --text "$TURN_TEXT"
+uv run tmux-notify --tmux-target "codex1:0.0" --text "$TURN_TEXT"
 ```
 
 Add `--chat-id` if `chat_id` is not set in `~/.codex/telegram.toml`.

@@ -11,10 +11,10 @@ dependencies = [
 ]
 
 [project.scripts]
-codex-telegram-exec-bridge = "codex_telegram_bridge.exec_bridge:main"
-codex-telegram-mcp-bridge = "codex_telegram_bridge.mcp_bridge:main"
-codex-telegram-tmux-notify = "codex_telegram_bridge.tmux_notify:main"
-codex-telegram-tmux-reply = "codex_telegram_bridge.tmux_reply_bot:main"
+exec-bridge = "codex_telegram_bridge.exec_bridge:main"
+mcp-bridge = "codex_telegram_bridge.mcp_bridge:main"
+tmux-notify = "codex_telegram_bridge.tmux_notify:main"
+tmux-reply = "codex_telegram_bridge.tmux_reply_bot:main"
 
 [build-system]
 requires = ["hatchling"]
