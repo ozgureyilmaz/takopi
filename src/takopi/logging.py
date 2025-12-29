@@ -12,7 +12,7 @@ class RedactTokenFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
         try:
             message = record.getMessage()
-        except Exception:
+        except (TypeError, ValueError):
             return True
 
         redacted = TELEGRAM_TOKEN_RE.sub("bot[REDACTED]", message)
