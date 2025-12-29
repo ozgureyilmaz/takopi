@@ -13,7 +13,8 @@ The orchestrator module containing:
 | `main()` / `run()` | CLI entry point via Typer |
 | `BridgeConfig` | Frozen dataclass holding runtime config |
 | `CodexExecRunner` | Spawns `codex exec`, streams JSONL, handles cancellation |
-| `_run_main_loop()` | Long-poll loop for Telegram updates |
+| `poll_updates()` | Async generator that drains backlog, long-polls updates, filters messages |
+| `_run_main_loop()` | TaskGroup-based main loop that spawns per-message handlers |
 | `_handle_message()` | Per-message handler with progress updates |
 | `extract_session_id()` | Parses `resume: <uuid>` from message text |
 | `truncate_for_telegram()` | Smart truncation preserving resume lines |
@@ -21,6 +22,7 @@ The orchestrator module containing:
 **Key patterns:**
 - Per-session locks prevent concurrent resumes to the same `session_id`
 - `asyncio.Semaphore` limits overall concurrency (default: 16)
+- `asyncio.TaskGroup` manages per-message tasks
 - Progress edits are throttled to ~2s intervals
 - Subprocess stderr is drained to a bounded deque for error reporting
 
@@ -96,7 +98,9 @@ def setup_logging(*, debug: bool):
 ```
 Telegram Update
     ↓
-_run_main_loop() validates chat_id, extracts text
+poll_updates() drains backlog, long-polls, filters chat_id == from_id == cfg.chat_id
+    ↓
+_run_main_loop() spawns tasks in TaskGroup
     ↓
 _handle_message() spawned as task
     ↓
@@ -132,4 +136,3 @@ Same as above, but:
 | Telegram API error | Logged, edit skipped (progress continues) |
 | Cancellation | Subprocess terminated, CancelledError re-raised |
 | No agent_message | Final shows "error" status |
-

@@ -42,6 +42,8 @@ chat_id = 123456789
 | `bot_token` | Telegram Bot API token from [@BotFather](https://t.me/BotFather) |
 | `chat_id` | Allowed chat ID (also used for startup notifications) |
 
+The bridge only accepts messages where the chat ID equals the sender ID and both match `chat_id` (i.e., private chat with that user).
+
 ### Running
 
 ```bash
@@ -81,10 +83,11 @@ resume: `019b66fc-64c2-7a71-81cd-081c504cfeb2`
 - **Startup**: Pending updates are drained (ignored) on startup
 - **Progress**: Updates are throttled to ~2s intervals, sent silently
 - **Notifications**: Codex's built-in notify is disabled (bridge handles it)
+- **Filtering**: Only accepts messages where chat ID equals sender ID and matches `chat_id`
 
 ## Development
 
-See [`src/codex_telegram_bridge/developing.md`](src/codex_telegram_bridge/developing.md) for architecture details.
+See [`developing.md`](developing.md) for architecture details.
 
 ```bash
 # Run tests
