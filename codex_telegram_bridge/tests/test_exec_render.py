@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from codex_telegram_bridge.exec_render import ExecProgressRenderer, render_event_cli
 
@@ -6,6 +7,8 @@ from codex_telegram_bridge.exec_render import ExecProgressRenderer, render_event
 def _loads(lines: str) -> list[dict]:
     return [json.loads(line) for line in lines.strip().splitlines() if line.strip()]
 
+
+FIXTURE_PATH = Path(__file__).resolve().parent / "fixtures" / "codex.jsonl"
 
 SAMPLE_STREAM = """
 {"type":"thread.started","thread_id":"0199a213-81c0-7800-8aa1-bbab2a035a53"}
@@ -37,6 +40,25 @@ def test_render_event_cli_sample_stream() -> None:
         "  Yep — there’s a `README.md` in the repository root.",
         "turn completed",
     ]
+
+
+def test_render_event_cli_real_run_fixture() -> None:
+    events = _loads(FIXTURE_PATH.read_text(encoding="utf-8"))
+    last_turn = None
+    out: list[str] = []
+    for evt in events:
+        last_turn, lines = render_event_cli(evt, last_turn)
+        out.extend(lines)
+
+    print("\n".join(out))
+
+    assert out[0] == "thread started"
+    assert "turn started" in out
+    assert any(line.startswith("[0] ▸ running:") for line in out)
+    assert any(line.startswith("[0] ✓ ran:") for line in out)
+    assert "assistant:" in out
+    assert any("exec-bridge" in line for line in out)
+    assert out[-1] == "turn completed"
 
 
 def test_progress_renderer_renders_progress_and_final() -> None:
