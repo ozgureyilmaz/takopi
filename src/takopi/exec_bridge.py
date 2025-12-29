@@ -35,12 +35,10 @@ RESUME_LINE = re.compile(
 def extract_session_id(text: str | None) -> str | None:
     if not text:
         return None
-    found = None
+    found: str | None = None
     for match in RESUME_LINE.finditer(text):
         found = match.group("id")
-    if found:
-        return found
-    return None
+    return found
 
 
 def resolve_resume_session(
