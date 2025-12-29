@@ -1,11 +1,22 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Any
 
 import httpx
 
 logger = logging.getLogger(__name__)
+
+
+class TelegramAPIError(RuntimeError):
+    def __init__(
+        self, method: str, payload: dict[str, Any], status_code: int | None
+    ) -> None:
+        desc = payload.get("description") or str(payload)
+        super().__init__(f"{method} failed: {desc}")
+        self.payload = payload
+        self.status_code = status_code
 
 
 class TelegramClient:
@@ -26,10 +37,22 @@ class TelegramClient:
         try:
             logger.debug("[telegram] request %s: %s", method, json_data)
             resp = await self._client.post(f"{self._base}/{method}", json=json_data)
-            resp.raise_for_status()
-            payload = resp.json()
+            payload: dict[str, Any] | None = None
+            try:
+                payload = resp.json()
+            except Exception:
+                resp.raise_for_status()
+                raise
             if not payload.get("ok"):
-                raise RuntimeError(f"Telegram API error: {payload}")
+                params = payload.get("parameters") or {}
+                retry_after = params.get("retry_after")
+                if resp.status_code == 429 and isinstance(retry_after, int):
+                    logger.warning(
+                        "[telegram] 429 retry_after=%s method=%s", retry_after, method
+                    )
+                    await asyncio.sleep(retry_after)
+                    return await self._post(method, json_data)
+                raise TelegramAPIError(method, payload, resp.status_code)
             logger.debug("[telegram] response %s: %s", method, payload)
             return payload["result"]
         except httpx.HTTPError as e:
