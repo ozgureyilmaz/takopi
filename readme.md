@@ -1,120 +1,68 @@
 # takopi
 
-🐙 *A little helper from Happy Planet, here to make your Codex sessions happier-pi!*
+🐙 *he just wants to help-pi*
 
-A Telegram bot that bridges messages to [Codex](https://github.com/openai/codex) sessions using non-interactive `codex exec --json`.
+telegram bot for [codex](https://github.com/openai/codex). with streaming progress and resumeable sessions.
 
-## Features
+## features
 
-- **Stateless Resume**: No database required—sessions are resumed via `` `codex resume <token>` `` lines embedded in messages
-- **Progress Updates**: Real-time progress edits showing commands, tools, and elapsed time
-- **Markdown Rendering**: Full Telegram-compatible markdown with entity support
-- **Concurrency**: Parallel runs across threads with per-session serialization
+stateless resume via `codex resume <token>` lines in chat.
 
-## Quick Start
+edits progress message while codex runs (commands, tools, reasoning, edits, elapsed time).
 
-### Prerequisites
+renders markdown to telegram entities.
 
-- [uv](https://github.com/astral-sh/uv) package manager
-- Python 3.14+
-- Codex CLI on PATH
+runs in parallel across threads and queues per thread to keep codex history sane.
 
-### Installation
+## requirements
 
-```bash
-# Install with uv, then run as `takopi`
-uv tool install takopi
-takopi
+- `uv` for installation (`curl -LsSf https://astral.sh/uv/install.sh | sh`)
+- `codex` on PATH (`npm install -g @openai/codex` or `brew install codex`)
 
-# or run with uvx
-uvx takopi
-```
+## install
 
-### Setup
+- `uv tool install takopi` to install as `takopi`
+- or try it out with `uvx takopi`
 
-1. **Start the bot**: Send `/start` to your bot in Telegram—it can't message you until you do
-2. **Trust your working directory**: Run `codex` once interactively in your project directory (must be a git repo) to add it to trusted directories
+## setup
 
-### Configuration
+1. get `bot_token` from [@BotFather](https://t.me/BotFather)
+2. get `chat_id` from [@myidbot](https://t.me/myidbot)
+2. send `/start` to the bot (telegram won't let it message you first)
+3. run `codex` once interactively in the repo to trust the directory
 
-Create `~/.takopi/takopi.toml` (or `.takopi/takopi.toml` for a repo-local config):
+## config
+
+takopi config lives in `~/.takopi/takopi.toml` and can be overriden by `.takopi/takopi.toml` in the current repo.
 
 ```toml
 bot_token = "123456789:ABCdefGHIjklMNOpqrsTUVwxyz"
 chat_id = 123456789
 
 [codex]
-# Optional: Codex profile name (defined in ~/.codex/config.toml)
+# optional: profile from ~/.codex/config.toml
 profile = "takopi"
-# Optional: extra args passed before `codex exec`
-extra_args = ["-c", "notify=[]"]
 ```
 
-Engine-specific settings live under a table named after the engine id (e.g. `[codex]`).
+## usage
 
-| Key | Description |
-|-----|-------------|
-| `bot_token` | Telegram Bot API token from [@BotFather](https://t.me/BotFather) |
-| `chat_id` | Your Telegram user ID from [@myidbot](https://t.me/myidbot) |
+start takopi in the repo you want to work on:
 
-The bridge only accepts messages where the chat ID equals the sender ID and both match `chat_id` (i.e., private chat with that user).
-
-### Codex Profile (Optional)
-
-Create a Codex profile in `~/.codex/config.toml`:
-
-```toml
-[profiles.takopi]
-model = "gpt-5.2-codex"
+```sh
+cd ~/dev/your-repo
+takopi
 ```
 
-Then set `profile = "takopi"` under `[codex]` in `~/.takopi/takopi.toml`.
+send a message to the bot.
 
-### Options
+to continue a thread, reply to a bot message.
 
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--final-notify` / `--no-final-notify` | `--final-notify` | Send final response as new message (vs. edit) |
-| `--debug` / `--no-debug` | `--no-debug` | Enable verbose logging |
-| `--engine ID` | `codex` | Engine backend id |
-| `--engine-option KEY=VALUE` |  | Engine-specific override (repeatable) |
-| `--version` |  | Show the version and exit |
+to stop a run, reply to the progress message with `/cancel`.
 
-## Usage
+## cli
 
-### New Conversation
+by default takopi sends the progress message silently, and replaces it with the final answer to notify you. this can be turned off with `--no-final-notify`
 
-Send any message to your bot. The bridge will:
+## development
 
-1. Send a silent progress message
-2. Stream events from `codex exec`
-3. Update progress every 2 seconds
-4. Send final response with a resume token line
-
-### Resume a Session
-
-Reply to a bot message (containing `` `codex resume <token>` ``), or include the resume line in your message:
-
-```
-`codex resume 019b66fc-64c2-7a71-81cd-081c504cfeb2`
-```
-
-### Cancel a Run
-
-Reply to a progress message with `/cancel` to stop the running execution.
-
-## Notes
-
-- **Startup**: Pending updates are drained (ignored) on startup
-- **Progress**: Updates are throttled to ~1s intervals, sent silently
-- **Queueing**: Messages for the same thread queue behind the active run without consuming extra concurrency slots
-- **Filtering**: Only accepts messages where chat ID equals sender ID and matches `chat_id`
-- **Single instance**: Run exactly one instance per bot token—multiple instances will race for updates
-
-## Development
-
-See [`developing.md`](docs/developing.md) and [`specification.md`](docs/specification.md) for architecture and behavior details.
-
-## License
-
-MIT
+see [`docs/specification.md`](docs/specification.md) and [`docs/developing.md`](`docs/developing.md`).
