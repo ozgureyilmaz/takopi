@@ -1,5 +1,12 @@
 # changelog
 
+## v0.7.0 (2026-01-04)
+
+### changes
+
+- migrate logging to structlog with structured pipelines and redaction
+- add msgspec schemas for jsonl decoding across runners
+
 ## v0.6.0 (2026-01-03)
 
 ### changes

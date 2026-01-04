@@ -134,12 +134,17 @@ def load_telegram_config() -> tuple[dict, Path]:
 ### `logging.py` - Secure logging setup
 
 ```python
-class RedactTokenFilter:
-    # Redacts bot tokens from log output
-
-def setup_logging(*, debug: bool):
-    # Configures root logger with redaction filter
+def setup_logging(*, debug: bool = False) -> None:
+    # Configures structlog pipeline, redaction, and output formatting.
 ```
+
+Environment flags:
+
+- `TAKOPI_LOG_LEVEL` (default `info`, `debug` forces `debug`)
+- `TAKOPI_LOG_FORMAT` (`console` or `json`)
+- `TAKOPI_LOG_COLOR` (`1/true/yes/on` to force color, `0/false/no/off` to disable)
+- `TAKOPI_LOG_FILE` (append JSON lines to a file)
+- `TAKOPI_TRACE_PIPELINE` (log pipeline events at info instead of debug)
 
 ### `onboarding.py` - Setup validation
 
