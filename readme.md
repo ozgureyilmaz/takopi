@@ -18,7 +18,7 @@ parallel runs across threads, per thread queue support.
 
 `/cancel` a running task.
 
-optional voice note transcription for Telegram (routes transcript like typed text).
+optional voice note transcription for telegram (routes transcript like typed text).
 
 ## requirements
 
@@ -152,9 +152,9 @@ if you prefer no notifications, `--no-final-notify` edits the progress message i
 
 ## plugins
 
-Takopi supports entrypoint-based plugins for engines, transports, and command backends.
+takopi supports entrypoint-based plugins for engines, transports, and command backends.
 
-See:
+see:
 
 - `docs/plugins.md`
 - `docs/public-api.md`

@@ -4,15 +4,15 @@
 
 ### changes
 
-- add optional Telegram voice note transcription (routes transcript like typed text) [#74](https://github.com/banteg/takopi/pull/74)
+- add optional telegram voice note transcription (routes transcript like typed text) [#74](https://github.com/banteg/takopi/pull/74)
 
 ### fixes
 
-- fix plugin allowlist matching and Windows session paths [#72](https://github.com/banteg/takopi/pull/72)
+- fix plugin allowlist matching and windows session paths [#72](https://github.com/banteg/takopi/pull/72)
 
 ### docs
 
-- document Telegram voice transcription settings [#74](https://github.com/banteg/takopi/pull/74)
+- document telegram voice transcription settings [#74](https://github.com/banteg/takopi/pull/74)
 
 ## v0.11.0 (2026-01-08)
 
@@ -31,7 +31,7 @@
 
 - add transport registry with `--transport` overrides and a `takopi transports` command [#69](https://github.com/banteg/takopi/pull/69)
 - migrate config loading to pydantic-settings and move telegram credentials under `[transports.telegram]` [#65](https://github.com/banteg/takopi/pull/65)
-- include project aliases in the Telegram slash-command menu with validation and limits [#67](https://github.com/banteg/takopi/pull/67)
+- include project aliases in the telegram slash-command menu with validation and limits [#67](https://github.com/banteg/takopi/pull/67)
 
 ### fixes
 
@@ -57,7 +57,7 @@
 ### changes
 
 - transport/presenter protocols plus transport-agnostic `exec_bridge`
-- move Telegram polling + wiring into `takopi.telegram` with transport/presenter adapters
+- move telegram polling + wiring into `takopi.telegram` with transport/presenter adapters
 - list configured projects in the startup banner
 
 ### fixes
@@ -70,7 +70,7 @@
 
 ### docs
 
-- add a projects/worktrees guide and document `takopi init` behavior in the README
+- add a projects/worktrees guide and document `takopi init` behavior in the readme
 
 ## v0.8.0 (2026-01-05)
 
@@ -127,8 +127,8 @@
 
 ### changes
 
-- add an opencode runner via the `opencode` CLI with json event parsing and resume support [#22](https://github.com/banteg/takopi/pull/22)
-- add a pi agent runner via the `pi` CLI with jsonl streaming and resume support [#24](https://github.com/banteg/takopi/pull/24)
+- add an opencode runner via the `opencode` cli with json event parsing and resume support [#22](https://github.com/banteg/takopi/pull/22)
+- add a pi agent runner via the `pi` cli with jsonl streaming and resume support [#24](https://github.com/banteg/takopi/pull/24)
 - document the opencode and pi runners, event mappings, and stream capture tips
 
 ### fixes
@@ -155,8 +155,8 @@
 
 ### changes
 
-- add a claude code runner via the `claude` CLI with stream-json parsing and resume support [#9](https://github.com/banteg/takopi/pull/9)
-- auto-discover engine backends and generate CLI subcommands from the registry [#12](https://github.com/banteg/takopi/pull/12)
+- add a claude code runner via the `claude` cli with stream-json parsing and resume support [#9](https://github.com/banteg/takopi/pull/9)
+- auto-discover engine backends and generate cli subcommands from the registry [#12](https://github.com/banteg/takopi/pull/12)
 - add `BaseRunner` session locking plus a `JsonlSubprocessRunner` helper for jsonl subprocess engines
 - add jsonl stream parsing and subprocess helpers for runners
 - lazily allocate per-session locks and streamline backend setup/install metadata
@@ -169,13 +169,13 @@
 
 ### fixes
 
-- stop leaking a hidden `engine-id` CLI option on engine subcommands
+- stop leaking a hidden `engine-id` cli option on engine subcommands
 
 ### docs
 
-- add a runner guide plus Claude Code docs (runner, events, stream-json cheatsheet)
-- clarify the Claude runner file layout and add guidance for JSONL-based runners
-- document “minimal” runner mode: Started+Completed only, completed-only actions allowed
+- add a runner guide plus claude code docs (runner, events, stream-json cheatsheet)
+- clarify the claude runner file layout and add guidance for jsonl-based runners
+- document "minimal" runner mode: started+completed only, completed-only actions allowed
 
 ## v0.2.0 (2025-12-31)
 
@@ -202,7 +202,7 @@
 - serialize new sessions once resume token is known
 - preserve resume tokens in error renders [#3](https://github.com/banteg/takopi/pull/3)
 - preserve file-change paths in action events [#2](https://github.com/banteg/takopi/pull/2)
-- terminate codex process groups on cancel (POSIX)
+- terminate codex process groups on cancel (posix)
 - correct resume command matching in bridge
 
 ## v0.1.0 (2025-12-29)
